@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.sigitwahyudi.saucedemo'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '19'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
+
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
+
+    testImplementation 'io.cucumber:cucumber-java:7.18.1'
+    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.18.1'
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'browser', System.getProperty('browser', 'chrome')
+    systemProperty 'cucumber.features', 'src/test/java/com/sigitwahyudi/saucedemo/features'
+    systemProperty 'cucumber.glue', 'com.sigitwahyudi.saucedemo'
+}
+
+tasks.register('testChrome', Test) {
+    useJUnitPlatform()
+    systemProperty 'browser', 'chrome'
+    dependsOn testClasses
+    description = 'Menjalankan test di browser Chrome'
+    group = 'verification'
+    include '**/*TestRunner.class'
+}
+
+tasks.register('testFirefox', Test) {
+    useJUnitPlatform()
+    systemProperty 'browser', 'firefox'
+    dependsOn testClasses
+    description = 'Menjalankan test di browser Firefox'
+    group = 'verification'
+    include '**/*TestRunner.class'
+}
