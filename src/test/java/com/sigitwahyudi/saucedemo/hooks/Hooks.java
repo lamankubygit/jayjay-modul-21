@@ -29,9 +29,12 @@ public class Hooks {
                 driver = new EdgeDriver();
                 break;
             default:
-                WebDriverManager.chromedriver().setup();
                 System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--headless"); // penting: supaya bisa jalan tanpa GUI
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                driver = new ChromeDriver(options);
                 break;
         }
 
