@@ -4,6 +4,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -15,7 +16,8 @@ public class Hooks {
     @Before
     public void setUp() {
         String browser = System.getProperty("browser", "chrome").toLowerCase();
-        System.out.println("Browser: " + browser + " dijalankan");
+        boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+        System.out.println("Browser: " + browser + " dijalankan | Headless: " + headless);
 
         switch (browser) {
             case "firefox":
@@ -28,7 +30,15 @@ public class Hooks {
                 break;
             default:
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+
+                if (headless) {
+                    options.addArguments("--headless=new");
+                    options.addArguments("--no-sandbox");
+                    options.addArguments("--disable-dev-shm-usage");
+                }
+
+                driver = new ChromeDriver(options);
                 break;
         }
 
