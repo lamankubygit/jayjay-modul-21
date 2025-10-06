@@ -31,13 +31,11 @@ public class Hooks {
             default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
-
-                if (headless) {
+                if (System.getProperty("headless", "false").equals("true")) {
                     options.addArguments("--headless=new");
                     options.addArguments("--no-sandbox");
                     options.addArguments("--disable-dev-shm-usage");
                 }
-
                 driver = new ChromeDriver(options);
                 break;
         }

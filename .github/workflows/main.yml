@@ -35,11 +35,16 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Install Chrome and ChromeDriver
+      - name: Install Chrome and ChromeDriver (matching version)
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          which chromedriver
+          sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          echo "Installed Chrome version: $CHROME_VERSION"
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          echo "Latest ChromeDriver version: $DRIVER_VERSION"
+          wget -q -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip"
+          sudo unzip -o /tmp/chromedriver.zip -d /usr/local/bin/
           chromedriver --version
 
       - name: Build with Gradle
