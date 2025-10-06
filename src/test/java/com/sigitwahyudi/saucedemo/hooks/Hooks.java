@@ -30,13 +30,8 @@ public class Hooks {
                 break;
             default:
                 WebDriverManager.chromedriver().setup();
-                ChromeOptions options = new ChromeOptions();
-                if (System.getProperty("headless", "false").equals("true")) {
-                    options.addArguments("--headless=new");
-                    options.addArguments("--no-sandbox");
-                    options.addArguments("--disable-dev-shm-usage");
-                }
-                driver = new ChromeDriver(options);
+                System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+                driver = new ChromeDriver();
                 break;
         }
 

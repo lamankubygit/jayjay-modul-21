@@ -2,56 +2,40 @@ name: UI Automation Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up JDK 19
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '19'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant execute permission for Gradle
+      - name: Give permission for Gradle
         run: chmod +x gradlew
 
-      - name: Install Chrome and ChromeDriver (matching version)
+      - name: Install Chrome & ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
-          echo "Installed Chrome version: $CHROME_VERSION"
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          echo "Latest ChromeDriver version: $DRIVER_VERSION"
-          wget -q -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip"
-          sudo unzip -o /tmp/chromedriver.zip -d /usr/local/bin/
-          chromedriver --version
+          sudo apt-get install -y chromium-browser chromium-chromedriver
 
-      - name: Build with Gradle
+      - name: Build project
         run: ./gradlew build --no-daemon
 
-      - name: Run Cucumber tests (headless)
-        run: ./gradlew test --no-daemon -Dheadless=true
+      - name: Run Selenium tests (headless)
+        run: |
+          export CHROME_BIN=/usr/bin/chromium-browser
+          export CHROMEDRIVER=/usr/bin/chromedriver
+          ./gradlew test --no-daemon -Dwebdriver.chrome.driver=$CHROMEDRIVER
 
       - name: Upload test report
         if: always()
