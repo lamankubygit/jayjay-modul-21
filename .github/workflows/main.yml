@@ -1,4 +1,4 @@
-name: UI Automation Test
+name: Web & API Automation Test
 
 on:
   push:
@@ -27,19 +27,38 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
+          echo "Chrome installed at: $(which chromium-browser)"
+          echo "ChromeDriver installed at: $(which chromedriver)"
 
       - name: Build project
-        run: ./gradlew build --no-daemon
+        run: ./gradlew clean build -x test --no-daemon
 
-      - name: Run Selenium tests (headless)
-        run: |
-          export CHROME_BIN=/usr/bin/chromium-browser
-          export CHROMEDRIVER=/usr/bin/chromedriver
-          ./gradlew test --no-daemon -Dwebdriver.chrome.driver=$CHROMEDRIVER
+      - name: Jalankan API Automation Tests
+        run: ./gradlew testApi --no-daemon
 
-      - name: Upload test report
+      - name: Upload API Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-report
-          path: build/reports/tests/test
+          name: api-report
+          path: build/reports/cucumber/api.html
+
+      - name: Jalankan Web Automation Tests (Headless)
+        run: |
+          export CHROME_BIN=/usr/bin/chromium-browser
+          export CHROMEDRIVER=/usr/bin/chromedriver
+          ./gradlew testWeb -Dheadless=true --no-daemon -Dbrowser=chrome
+
+      - name: Upload Web Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-report
+          path: build/reports/cucumber/web.html
+
+      - name: Upload All Cucumber Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-cucumber-reports
+          path: build/reports/cucumber/

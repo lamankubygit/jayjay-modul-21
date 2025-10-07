@@ -1,3 +1,4 @@
+@web
 Feature: Login ke website SauceDemo
 
   @positive

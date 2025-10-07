@@ -1,7 +1,7 @@
 package com.sigitwahyudi.saucedemo.steps;
 
 import com.sigitwahyudi.saucedemo.pages.LoginPage;
-import com.sigitwahyudi.saucedemo.hooks.Hooks;
+import com.sigitwahyudi.saucedemo.hooks.WebHooks;
 import io.cucumber.java.en.*;
 import org.openqa.selenium.WebDriver;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +13,7 @@ public class LoginSteps {
 
     @Given("user membuka halaman login SauceDemo")
     public void user_membuka_halaman_login_saucedemo() {
-        driver = Hooks.getDriver();
+        driver = WebHooks.getDriver();
         driver.get("https://www.saucedemo.com/v1/");
         loginPage = new LoginPage(driver);
     }
